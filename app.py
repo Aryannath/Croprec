@@ -8,27 +8,26 @@ import numpy as np
 model_path = 'model\XGBoost.pkl'
 model = pickle.load(open(model_path, 'rb'))
 
-def fetch(city):                                                        ## abhi esme editing krni baki hai
-    """
-    Fetch and returns the temperature and humidity of a city
-    :params: city
-    :return: temperature, humidity
-    """
+def get_city(city):                                                      
+    
     api_key = config.weather_api_key
-    base_url = "http://api.openweathermap.org/data/2.5/weather?"            
+    base_url = "https://pro.openweathermap.org/data/2.5/forecast/climate?"            
 
-    complete_url = base_url + "appid=" + api_key + "&q=" + city
+    complete_url = base_url + "q=" + city + "&appid=" + api_key
     response = requests.get(complete_url)
     x = response.json()
 
     if x["cod"] != "404":
-        y = x["main"]
+        y = x["list"]
+        z =y[0].temp.day
+        q =y[0].temp.night
 
-        temperature = round((y["temp"] - 273.15), 2)
-        humidity = y["humidity"]
-        return temperature, humidity
+        temp = round(( ((z+q)/2) - 273.15), 2)
+        humi = y[0].humidity
+        return temp, humi
     else:
         return None
+
 
 
 app = Flask(__name__)
