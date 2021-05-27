@@ -11,7 +11,7 @@ model = pickle.load(open(model_path, 'rb'))
 def get_city(city):                                                      
     
     api_key = config.weather_api_key
-    base_url = "https://pro.openweathermap.org/data/2.5/forecast/climate?"            
+    base_url = "https://api.openweathermap.org/data/2.5/forecast?"            
 
     complete_url = base_url + "q=" + city + "&appid=" + api_key
     response = requests.get(complete_url)
@@ -19,15 +19,14 @@ def get_city(city):
 
     if x["cod"] != "404":
         y = x["list"]
-        z =y[0].temp.day
-        q =y[0].temp.night
+        t1 = ((y[7].main.temp + y[14].main.temp + y[21].main.temp + y[28].main.temp+y[35].main.temp)/5)
+        h1 =((y[7].main.humidity+ y[14].main.humidity + y[21].main.humidity + y[28].main.humidity+y[35].main.humidity)/5)
 
-        temp = round(( ((z+q)/2) - 273.15), 2)
-        humi = y[0].humidity
+        temp = round (( t1 - 273.15), 2)
+        humi = h1
         return temp, humi
     else:
         return None
-
 
 
 app = Flask(__name__)
@@ -37,22 +36,26 @@ app = Flask(__name__)
 
 @ app.route('/')
 def home():
-    title = 'Harvestify - Home'
-    return render_template('index.html', title=title)
+    title = 'SoilUp Home page'
+    return render_template('index.html', title=title) #this title can be used in the front end from here the backend
 
 # render crop recommendation form page
 
 
-@ app.route('/crop-recommend')
-def crop_recommend():
-    title = 'Harvestify - Crop Recommendation'
-    return render_template('crop.html', title=title)
+@ app.route('/city', methods=['POST'])
+def city():
+     city = request.form.get("city")   #state = request.form.get("stt") ,,this is not used because we don't need home state
+     return render_template('city.html')
 
+@ app.route('/crop-recommend') #this slash is like the slash we have in an web URL
+def crop_recommend():
+    title = 'SoilUp - Crop Rec'
+    return render_template('lab.html', title=title)
 
 
 @ app.route('/crop-predict', methods=['POST'])
 def crop_prediction():
-    title = 'Harvestify - Crop Recommendation'
+    title = 'SoilUp - Crop Pred'
 
     if request.method == 'POST':
         N = int(request.form['nitrogen'])
@@ -61,12 +64,11 @@ def crop_prediction():
         ph = float(request.form['ph'])
         rainfall = float(request.form['rainfall'])
 
-        # state = request.form.get("stt")
-        city = request.form.get("city")
+      
 
-        if fetch(city) != None:
-            temperature, humidity = fetch(city)
-            data = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
+        if get_city(city) != None:
+            temp, humi = get_city(city)
+            data = np.array([[N, P, K, temp, humi, ph, rainfall]])
             my_prediction = model.predict(data)
             final_prediction = my_prediction[0]
 
@@ -75,6 +77,10 @@ def crop_prediction():
         else:
 
             return render_template('try_again.html', title=title)
+
+
+if __name__ == '__main__':
+    app.run(debug=False)
 
 
 
