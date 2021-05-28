@@ -33,7 +33,8 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   <h1 class="w3-margin w3-jumbo" style=" font-weight: bold; color:black;border:15px solid Violet; "> WELCOME TO SOILUP </h1>
   <p><br><br><br>
   </p>
-  <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Try the Model</button>
+  <a href="{{ url_for('city') }}"><button class="w3-button w3-black w3-padding-large w3-large w3-margin-top" >Try the Model</button></a>
+ 
 </header>
 
 <!-- First Grid -->
@@ -41,10 +42,10 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   <div class="w3-content">
     <div class="w3-twothird">
       <h1>ABOUT THE PROJECT</h1>
-      <h5 class="w3-padding-32">This is a machine learning state of the art model with an accuracy of over 99%</h5>
+      <h5 class="w3-padding-32">This is a machine learning state-of-the-art model with an accuracy of over 99%</h5>
 
-      <p class="w3-text-grey">In this model we have used a XGBoost Classifier which will predict for us the best crop which can be planted on the field based on diffrent factors of the soil like nitrogen content of the soil and rainfall levels.
-                              For getting the temprature for the next 30 days and the humidity of the area we are using OpenWeather's free API for students.</p>
+      <p class="w3-text-grey">In this model we have used a XGBoost Classifier which will predict for us the best crop out of 22 labels for crops available, which can be planted on the field based on diffrent factors of the soil like nitrogen content of the soil and rainfall levels.
+                              For getting the temprature of the next 15 days and the humidity of the area we are using OpenWeather's free API for developers. The machine learning model is hosted on this interactive website using Heroku. The dataset used for training our model was taken up from Kaggle which had 2200 instances and 7 variables.</p>
     </div>
 
     <div class="w3-third w3-center">
@@ -61,7 +62,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     </div>
 
     <div class="w3-twothird">
-      <h1>AOUT ME</h1>
+      <h1>ABOUT ME</h1>
       <h5 class="w3-padding-32">Hi! I am Aryan currently in my undergrad i love data science and tech in general.</h5>
 
       <p class="w3-text-grey"> There isn't much to say here,  <a href="https://aryannath.github.io/" style="color: green; font-weight: bold;">click here</a> to visit my website or get connected with social media, click at the icons at the bottom of the page.<br><br>Thank You!</p>
