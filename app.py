@@ -1,12 +1,15 @@
 from re import search
-from flask import Flask, render_template, request 
+from flask import Flask, render_template, request ,session
 import requests
 import config
 import pickle
 import io
 import numpy as np
 
-model_path = 'model\XGBoost.pkl'             # 'model\XGBoost.pkl'
+
+
+
+model_path = 'model\XGBoost.pkl'             # file se lega
 model = pickle.load(open(model_path, 'rb'))
 
 def get_city(city):                                                      
@@ -18,15 +21,14 @@ def get_city(city):
     response = requests.get(complete_url)
     x = response.json()
 
-    if x["cod"] != "404":
+    if  x["cod"] != "404":
         y = x["list"]
-        t1 = ((y[7]['main']['temp'] + y[14]['main']['temp'] + y[21]['main']['temp'] + y[28]['main']['temp']+y[35]['main']['temp'])/5)
-        h1 = ((y[7]['main']['humidity']+ y[14]['main']['humidity'] + y[21]['main']['humidity'] + y[28]['main']['humidity']+y[35]['main']['humidity'])/5)
-
-        temp = round (( t1 - 273.15), 2)
-        humi = h1
+        
+        temp = round (( ((y[7]['main']['temp'] + y[14]['main']['temp'] + y[21]['main']['temp'] + y[28]['main']['temp']+y[35]['main']['temp'])/5) - 273.15), 2)
+        humi = ((y[7]['main']['humidity']+ y[14]['main']['humidity'] + y[21]['main']['humidity'] + y[28]['main']['humidity']+y[35]['main']['humidity'])/5)
         return temp, humi
     else:
+        
         return None
 
  
@@ -35,8 +37,8 @@ def get_city(city):
  
 
 app = Flask(__name__)
+app.secret_key = "hello"
 
-cityy=None
 
 # render home page
 
@@ -54,13 +56,16 @@ def city():
        # if request.method == "GET": 
        #  cityy = request.args.get("city")   #state = request.form.get("stt") ,,this is not used because we don't need home state
         # return render_template('test.html' , ci=cityy) 
-         return render_template('city.html')     # cityy ke andr data hi nhi ara hai shyd this is due to request method post
+        return render_template('city.html')     # cityy ke andr data hi nhi ara hai shyd this is due to request method post
 
 @ app.route('/crop-recommend', methods=['GET','POST']) #this slash is like the slash we have in an web URL
 def crop_recommend():
     
-    global cityy
-    cityy = request.args.get("city")
+    
+     
+    session["op"]= request.args.__getitem__("city")
+    
+
     return render_template('lab.html')
 
 
@@ -70,7 +75,7 @@ def crop_prediction():
     
    
    
-    if request.method == 'POST':                #we can also make a new block like nitrogen for city
+    if request.method == 'POST':               
         N = int(request.form['nitrogen'])
         P = int(request.form['phosphorous'])
         K = int(request.form['pottasium'])
@@ -80,15 +85,16 @@ def crop_prediction():
 
        
         
+        citu = session["op"]  #temporary test variable to test session variable
 
 
-        if get_city(cityy) != None:
-            temp, humi = get_city(cityy)
+        if get_city(citu)!= None:
+            temp, humi = get_city(citu)
             data = np.array([[N, P, K, temp, humi, ph, rainfall]])
             my_prediction = model.predict(data)
             final_prediction = my_prediction[0]
 
-            return render_template('result.html', prediction=final_prediction,tt=temp,hh=humi)
+            return render_template('result.html', prediction=final_prediction)
 
         else:
 
