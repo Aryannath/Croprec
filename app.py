@@ -3,9 +3,7 @@ from flask import Flask, render_template, request ,session
 import requests
 import config
 import pickle
-import io
 import numpy as np
-
 
 
 
@@ -51,10 +49,10 @@ def home():
 # render crop recommendation form page
 
 
-@ app.route('/city', methods=['GET','POST']) #maybe a herf should be used 
+@ app.route('/city', methods=['GET']) #maybe a herf should be used 
 def city():
        # if request.method == "GET": 
-       #  cityy = request.args.get("city")   #state = request.form.get("stt") ,,this is not used because we don't need home state
+        #state = request.form.get("stt") ,,this is not used because we don't need home state
         # return render_template('test.html' , ci=cityy) 
         return render_template('city.html')     # cityy ke andr data hi nhi ara hai shyd this is due to request method post
 
@@ -63,7 +61,7 @@ def crop_recommend():
     
     
      
-    session["op"]= request.args.__getitem__("city")
+    session["op"]= request.args.__getitem__("city") # collecting and passinfg the city from the brower link which we got from the "get" method
     
 
     return render_template('lab.html')
