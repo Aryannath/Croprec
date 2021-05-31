@@ -7,7 +7,7 @@ import numpy as np
 
 
 
-model_path = 'model\XGBoost.pkl'             # file se lega
+model_path = 'model/XGBoost.pkl'             # file se lega
 model = pickle.load(open(model_path, 'rb'))
 
 def get_city(city):                                                      
